@@ -2,10 +2,10 @@
 #include <string>
 #include <ncurses.h>
 
-#define WIDTH 32
+#define WIDTH 64
 #define HEIGHT 32
 
-#define XOFF 50
+#define XOFF 20
 #define YOFF 10
 
 #define MAX_INVENTORY 128
@@ -94,12 +94,83 @@ map emptyMap(int h, int w)
 
 void prntMap (int h, int w, int XOffset, int YOffset, map toBePrinted, player p)
 {
+
+	start_color();
+	init_pair(1, COLOR_BLACK, COLOR_RED); //Lava (X obstacle)
+	init_pair(2, COLOR_MAGENTA, COLOR_CYAN); //Player
+	init_pair(3, COLOR_BLACK, COLOR_BLACK); //Pavement
+	init_pair(4, COLOR_CYAN, COLOR_YELLOW); //Coin
+	init_pair(5, COLOR_WHITE, COLOR_BLUE);//Obstacle non-damaging
+	init_pair(6, COLOR_RED, COLOR_WHITE); //Wall
+	init_pair(7, COLOR_WHITE, COLOR_MAGENTA); //Potion
+
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			if ((p.posX == j) && (p.posY == i)) mvaddch(i + YOffset, j + XOffset, p.id);
-			else mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+			if ((p.posX == j) && (p.posY == i))
+			{
+				attron(COLOR_PAIR(2));
+				mvaddch(i + YOffset, j + XOffset, p.id);
+				attroff(COLOR_PAIR(2));
+			}
+			else 
+			{
+				switch (toBePrinted.charmap[i][j])
+				{
+					case OBSTACLE_A:
+						attron(COLOR_PAIR(1));
+						
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(1));
+						break;
+					case OBSTACLE_B:
+						attron(COLOR_PAIR(5));
+						
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(5));
+						break;
+					case OBSTACLE_C:
+						attron(COLOR_PAIR(5));
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(5));
+						break;
+					case COIN:
+						attron(COLOR_PAIR(4));
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(4));
+						break;
+					case EMPTY:
+						attron(COLOR_PAIR(3));
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(3));
+						break;
+					case VERTWALL:
+						attron(COLOR_PAIR(6));
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(6));
+						break;
+					case HORIZWALL:
+						attron(COLOR_PAIR(6));
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(6));
+						break;
+
+					case ITEM_A:
+						attron(COLOR_PAIR(7));
+						
+						mvaddch(i + YOffset, j + XOffset, toBePrinted.charmap[i][j]);
+						attroff(COLOR_PAIR(7));
+						break;
+				}
+			}
 		}
 	}
 }
@@ -230,7 +301,9 @@ void useItem (plyrPnt p, char itm)
 }
 
 int main()
-{	
+{
+
+
 	raw();
 	map myMap;
 	map gameMap;
