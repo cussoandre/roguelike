@@ -318,8 +318,33 @@ void useItem (plyrPnt p, char itm)
 	}
 }
 
+void loseScreen (player p)
+{
+	move (0,0);
+	clear();
+	init_pair(9, COLOR_BLACK, COLOR_RED);
+	attron(COLOR_PAIR(9));
+	printw ("\n\n\nYOU DIED.\nThese were your stats\n\n\n");
+	drawStats(p);
+	attroff(COLOR_PAIR(9));
+	refresh();
+	cbreak();
+	while(getch()!='X');
+	endwin();
+	exit(0);
+}
+
 int main()
 {
+	initscr();
+	if (has_colors() == false)
+	{
+		printw("this version of ROGUELIKE needs a color terminal to work");
+		refresh();
+		getch();
+		endwin();
+		exit(1);
+	}
 
 	raw();
 //	map myMap;
@@ -333,7 +358,6 @@ int main()
 	P1.posY = 3;
 
 	gameMap = generateRandomMap(seed, 60, emptyMap(HEIGHT, WIDTH));
-	initscr();
 	printw("Hello");
 	refresh();
 	getch();
@@ -380,7 +404,7 @@ int main()
 		if (P1.posY >= HEIGHT-1) P1.posY = HEIGHT -2;
 		if (P1.posY < 1) P1.posY = 1;
 		if (P1.hp > MAXHP) P1.hp = MAXHP;
-
+		if (P1.hp <= 0) loseScreen(P1);
 		if (checkCollInter(&P1, gameMap, x2, y2))
 		{
 			P1.posX = x2;
