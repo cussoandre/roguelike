@@ -8,7 +8,7 @@
 #define XOFF 20
 #define YOFF 10
 
-#define MAX_INVENTORY 128
+#define MAX_INVENTORY 32
 #define MAXHP 400
 
 #define HORIZWALL '_'
@@ -31,9 +31,11 @@
 #define FLOOR 'F'
 #define WALL 'X'
 #define COIN '*'
+#define TRIG '+'
 
 #define PLYRFLD 5
 
+int seed = 42;
 
 char tiles[NUMTILES] = {COIN, COIN, COIN, OBSTACLE_A, OBSTACLE_B, OBSTACLE_C, ITEM_A};
 char tileTypes[NUMTILES] = {COIN, COIN, COIN, OBST, OBST, OBST, ITEM};
@@ -89,6 +91,18 @@ map emptyMap(int h, int w)
 		newMap.charmap[0][j] = HORIZWALL;
 		newMap.charmap[h-1][j] = HORIZWALL;
 	}
+
+	newMap.charmap[h-1][w/2] = EMPTY;
+	newMap.typemap[h-1][w/2] = TRIG;
+	
+	newMap.charmap[h/2][0] = EMPTY;
+	newMap.typemap[h/2][0] = TRIG;
+	
+	newMap.charmap[0][w/2] = EMPTY;
+	newMap.typemap[0][w/2] = TRIG;
+	
+	newMap.charmap[h/2][w-1] = EMPTY;
+	newMap.typemap[h/2][w-1] = TRIG;
 	return newMap;
 }
 
@@ -220,7 +234,7 @@ void addItem (plyrPnt p, char itm)
 }
 
 bool checkCollInter (plyrPnt p, map m, int newX, int newY)
-{
+{	
 	char newPos = m.charmap[newY][newX];
 	char nPType = m.typemap[newY][newX];
 
@@ -241,6 +255,10 @@ bool checkCollInter (plyrPnt p, map m, int newX, int newY)
 	else if (nPType == COIN)
 	{
 		p->points++;
+		return true;
+	}
+	else if (nPType == TRIG)
+	{
 		return true;
 	}
 	else if (nPType == WALL) return false;
@@ -303,9 +321,8 @@ void useItem (plyrPnt p, char itm)
 int main()
 {
 
-
 	raw();
-	map myMap;
+//	map myMap;
 	map gameMap;
 	char input;
 	player P1;
@@ -315,12 +332,12 @@ int main()
 	P1.posX = 6;
 	P1.posY = 3;
 
-	myMap = generateRandomMap(15, 30, emptyMap(HEIGHT, WIDTH));
+	gameMap = generateRandomMap(seed, 60, emptyMap(HEIGHT, WIDTH));
 	initscr();
 	printw("Hello");
 	refresh();
 	getch();
-	gameMap = myMap;
+//	gameMap = myMap;
 	while (input != 'X')
 	{	
 		move(0,0);
@@ -356,6 +373,8 @@ int main()
 				break;	
 		}
 
+		//if (p1.posX == 0) && (p1.posY == HEIGHT/2)
+
 		if (P1.posX >= WIDTH-1) P1.posX = WIDTH -2;
 		if (P1.posX < 1) P1.posX = 1;
 		if (P1.posY >= HEIGHT-1) P1.posY = HEIGHT -2;
@@ -371,6 +390,40 @@ int main()
 				gameMap.charmap[P1.posY][P1.posX] = EMPTY;
 				gameMap.typemap[P1.posY][P1.posX] = FLOOR;
 			}
+			else if ((gameMap.typemap[P1.posY][P1.posX]) == TRIG)
+			{
+				if (P1.posX == 0)
+				{
+					seed *= 2;
+					gameMap = emptyMap(HEIGHT, WIDTH);
+					gameMap = generateRandomMap(seed, 30, gameMap);
+					P1.posX = WIDTH -2;
+				}	
+				else if (P1.posX >= WIDTH-1)
+				{
+					seed /= 2;
+					gameMap = emptyMap(HEIGHT, WIDTH);
+					gameMap = generateRandomMap(seed, 30, gameMap);
+
+					P1.posX = 0;
+				}
+				else if (P1.posY == 0)
+				{
+					seed *= 13;
+					gameMap = emptyMap(HEIGHT, WIDTH);
+					gameMap = generateRandomMap(seed, 30, gameMap);
+						
+					P1.posY = HEIGHT -2;
+				}	
+				else if (P1.posY >= HEIGHT-1)
+				{
+					seed /= 13;
+					gameMap = emptyMap(HEIGHT, WIDTH);
+					gameMap = generateRandomMap(seed, 30, gameMap);
+					P1.posY = 0;
+				}			
+			}
+
 		}
 	
 		
