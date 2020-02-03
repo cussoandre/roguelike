@@ -358,7 +358,8 @@ int main()
 	P1.posY = 3;
 
 	gameMap = generateRandomMap(seed, 60, emptyMap(HEIGHT, WIDTH));
-	printw("Hello");
+	printw("\n:::::::..         ...         .,-:::::/     ...    :::  .,::::::     :::       :::   :::  .     .,::::::  \n;;;;``;;;;     .;;;;;;;.    ,;;-'````'      ;;     ;;;  ;;;;''''     ;;;       ;;;   ;;; .;;,.  ;;;;''''  \n  [[[,/[[['    ,[[     \[[,  [[[   [[[[[[/  [['     [[[   [[cccc      [[[       [[[   [[[[[/'     [[cccc   \n $$$$$$c      $$$,     $$$  \"$$c.    \"$$   $$      $$$   $$\"\"\"\"      $$'       $$$  _$$$$,       $$""""   \n 888b \"88bo,  \"888,_ _,88P   `Y8bo,,,o88o  88    .d888   888oo,__   o88oo,.__  888  \"888\"88o,    888oo,__ \n MMMM   \"W\"     \"YMMMMMP\"      `'YMUP\"YMM   \"YmmMMMM\"\"   \"\"\"\"YUMMM  \"\"\"\"YUMMM  MMM   MMM \"MMP\"   \"\"\"\"YUMMM");
+	printw("\n\n\n\t\t\tPRESS ANY KEY TO CONTINUE :)");
 	refresh();
 	getch();
 //	gameMap = myMap;
